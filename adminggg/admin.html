@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Панель администратора</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        form {
+            margin-bottom: 20px;
+        }
+        input, button {
+            margin: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Панель администратора</h1>
+
+    <!-- Форма для добавления товара -->
+    <h2>Добавить товар</h2>
+    <form id="addProductForm">
+        <input type="text" id="name" placeholder="Название" required>
+        <input type="number" id="price" placeholder="Цена" required>
+        <input type="text" id="description" placeholder="Описание" required>
+        <button type="submit">Добавить</button>
+    </form>
+
+    <!-- Форма для редактирования товара -->
+    <h2>Редактировать товар</h2>
+    <form id="editProductForm">
+        <input type="number" id="editId" placeholder="ID товара" required>
+        <input type="text" id="editName" placeholder="Новое название">
+        <input type="number" id="editPrice" placeholder="Новая цена">
+        <input type="text" id="editDescription" placeholder="Новое описание">
+        <button type="submit">Обновить</button>
+    </form>
+
+    <!-- Форма для удаления товара -->
+    <h2>Удалить товар</h2>
+    <form id="deleteProductForm">
+        <input type="number" id="deleteId" placeholder="ID товара" required>
+        <button type="submit">Удалить</button>
+    </form>
+
+    <script>
+        // Добавление товара
+        document.getElementById('addProductForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const product = {
+                name: document.getElementById('name').value,
+                price: parseFloat(document.getElementById('price').value),
+                description: document.getElementById('description').value
+            };
+            const response = await fetch('/products', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(product)
+            });
+            alert(await response.text());
+        });
+
+        // Редактирование товара
+        document.getElementById('editProductForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const productId = parseInt(document.getElementById('editId').value);
+            const updatedProduct = {
+                name: document.getElementById('editName').value,
+                price: parseFloat(document.getElementById('editPrice').value),
+                description: document.getElementById('editDescription').value
+            };
+            const response = await fetch(`/products/${productId}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(updatedProduct)
+            });
+            alert(await response.text());
+        });
+
+        // Удаление товара
+        document.getElementById('deleteProductForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const productId = parseInt(document.getElementById('deleteId').value);
+            const response = await fetch(`/products/${productId}`, {
+                method: 'DELETE'
+            });
+            alert(await response.text());
+        });
+    </script>
+</body>
+</html>
