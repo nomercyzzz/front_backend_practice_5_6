@@ -23,10 +23,10 @@
     <!-- Форма для добавления товара -->
     <h2>Добавить товар</h2>
     <form id="addProductForm">
+        <input type="number" id ="id" placeholder="id товара" required>
         <input type="text" id="name" placeholder="Название" required>
         <input type="number" id="price" placeholder="Цена" required>
         <input type="text" id="description" placeholder="Описание" required>
-        <input type="number" id ="id" placeholder="id товара" required>
         <button type="submit">Добавить</button>
     </form>
 
@@ -52,10 +52,10 @@
         document.getElementById('addProductForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             const product = {
+                id: parseFloat(document.getElementById('id').value),
                 name: document.getElementById('name').value,
                 price: parseFloat(document.getElementById('price').value),
-                description: document.getElementById('description').value,
-                id: document.getElementById('id').value
+                description: document.getElementById('description').value
             };
             const response = await fetch('/products', {
                 method: 'POST',

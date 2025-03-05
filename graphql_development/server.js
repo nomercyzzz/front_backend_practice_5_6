@@ -10,12 +10,12 @@ const path = require('path');
 const app = express();
 const PORT = 4000;
 
-// Загружаем данные
+// Загружаем данные из JSON
 const productsData = JSON.parse(fs.readFileSync(path.join(__dirname, '..', 'xxx.json')));
 
 // Определяем схему GraphQL
 const typeDefs = gql`
-  type Xxx {
+  type Product {
     id: ID!
     name: String!
     price: Int!
@@ -23,18 +23,30 @@ const typeDefs = gql`
   }
 
   type Query {
-    products(id: ID): [Xxx]   # Аргумент 'id' добавлен в Query
+    products(id: ID, name: String, description: String, price: Int): [Product]
   }
 `;
 
 // Определяем резолверы
 const resolvers = {
   Query: {
-    products: (_, { id }) => {
+    products: (_, { id, name, description, price }) => {
+      let filteredProducts = productsData;
+
       if (id) {
-        return productsData.filter(product => product.id === id);  // Фильтрация по id
+        filteredProducts = filteredProducts.filter(product => product.id.toString() === id.toString());
       }
-      return productsData;  // Если id не передан, возвращаем все товары
+      if (name) {
+        filteredProducts = filteredProducts.filter(product => product.name.toLowerCase().includes(name.toLowerCase()));
+      }
+      if (description) {
+        filteredProducts = filteredProducts.filter(product => product.description.toLowerCase().includes(description.toLowerCase()));
+      }
+      if (price) {
+        filteredProducts = filteredProducts.filter(product => product.price === price);
+      }
+
+      return filteredProducts;
     }
   }
 };
@@ -51,7 +63,7 @@ async function startServer() {
   app.use('/graphql', cors(), bodyParser.json(), expressMiddleware(server));
 
   app.listen(PORT, () => {
-    console.log(`🚀 Apollo Server запущен на http://localhost:${PORT}/graphql`);
+    console.log(' Apollo Server запущен на http://localhost:'+PORT+'/graphql');
   });
 }
 
