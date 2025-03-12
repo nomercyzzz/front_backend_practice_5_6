@@ -64,5 +64,5 @@ app.delete('/products/:id', (req, res) => {
 
 // Запуск сервера
 app.listen(PORT, () => {
-    console.log(`Панель администратора запущена на http://localhost:${PORT}`);
+    console.log('панель администратора запущена на http://localhost:'+PORT);
 });
